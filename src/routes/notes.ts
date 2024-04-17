@@ -140,8 +140,51 @@ notesRouter.put('/:id', (req: Request, res: Response) => {
 
 })
 
-// Update - PATCH -> TODO: Beispiel
-notesRouter.patch('/:id', (req: Request, res: Response) => { })
+
+  // Update - PATCH
+notesRouter.patch('/:id', (req: Request, res: Response) => { 
+  const id = parseInt(req.params.id)
+
+  // Daten aus dem Request-Körper extrahieren
+  const { title, content, user } = req.body
+
+  // Alte Notiz abrufen
+  const oldNote = getNoteById(id)
+
+  // Überprüfen, ob die Notiz vorhanden ist
+  if (!oldNote) {
+    return res.status(404).send(`Die Notiz mit ID ${id} wurde nicht gefunden.`)
+  }
+
+  // Aktualisieren der Notizdetails, wenn diese im Request-Körper vorhanden sind
+  if (title !== undefined) {
+    oldNote.title = title
+  }
+  if (content !== undefined) {
+    oldNote.content = content
+  }
+  if (user !== undefined) {
+    oldNote.user = user
+  }
+
+  // Alte Notiz in der Datenbank aktualisieren
+  const oldNotes = getNotes()
+  const updatedNotes = oldNotes.map(note => {
+    if (note.id === id) {
+      return oldNote
+    }
+    return note
+  })
+
+  // Aktualisierte Notizen in Datei speichern
+  const newNotes = { notes: updatedNotes }
+  fs.writeFileSync('data/notes.json', JSON.stringify(newNotes))
+
+  // Rückmeldung geben, dass die Notiz aktualisiert wurde
+  res.status(200).send(`Die Notiz mit ID ${id} wurde erfolgreich aktualisiert.`)
+})
+
+ })
 
 // Delete - DELETE
 notesRouter.delete('/:id', (req: Request, res: Response) => { 
