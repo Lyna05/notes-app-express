@@ -184,7 +184,6 @@ notesRouter.patch('/:id', (req: Request, res: Response) => {
   res.status(200).send(`Die Notiz mit ID ${id} wurde erfolgreich aktualisiert.`)
 })
 
- })
 
 // Delete - DELETE
 notesRouter.delete('/:id', (req: Request, res: Response) => { 
