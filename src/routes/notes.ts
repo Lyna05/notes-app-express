@@ -16,12 +16,19 @@ export const notesRouter = Router()
  * @returns {void} Responds with a HTTP 204 No Content status upon successful addition of the note.
  */
 notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
+  const authorizedUser = req.headers.authorization!
 
   const {title, content, user, categories}: RequestBody = req.body
+  
+  if (authorizedUser !== user) {
+    res.status(403).send('Forbidden')
 
-  addNote(title, content, user, categories)
+  } else {
+   const newNote = addNote(title, content, user, categories)
+   res.status(201).send('Die Notiz wurde erfolgreich erstellt.\n' + JSON.stringify(newNote))
+  }
 
-  res.status(204).send()
+  
 })
 
 /**
